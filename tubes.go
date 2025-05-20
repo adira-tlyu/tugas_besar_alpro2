@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 const NMAX int = 1024
+const KEY string = "wZuNpR8h3vKD"
 
 type daftarAsetKripto struct {
 	nama         string
@@ -21,88 +22,212 @@ type riwayatTransaksi struct {
 	jumlah float64
 }
 
-type arrAsetK [NMAX - 1]daftarAsetKripto
-type arrAsetP [NMAX - 1]daftarAsetPengguna
-type arrTransaksi [NMAX - 1]riwayatTransaksi
+type arrAsetK [NMAX-1]daftarAsetKripto
+type arrAsetP [NMAX-1]daftarAsetPengguna
+type arrTransaksi [NMAX-1]riwayatTransaksi
 
 func main() {
 	var daftarK arrAsetK
 	var daftarP arrAsetP
 	var riwayat arrTransaksi
+	var first, exit bool
 	var s float64 = 100000
 	var n, countDaftarK, countDaftarP, countRiwayat int
-
-	testData(&daftarK, &countDaftarK)
-
-	for n < 7 {
-		showMenu(s)
+	var asciiDone string
+	
+	asciiDone = `
+  /$$$$$$  /$$$$$$$$ /$$       /$$$$$$$$  /$$$$$$   /$$$$$$  /$$$$$$
+ /$$__  $$| $$_____/| $$      | $$_____/ /$$__  $$ /$$__  $$|_  $$_/
+| $$  \__/| $$      | $$      | $$      | $$  \__/| $$  \ $$  | $$  
+|  $$$$$$ | $$$$$   | $$      | $$$$$   |  $$$$$$ | $$$$$$$$  | $$  
+ \____  $$| $$__/   | $$      | $$__/    \____  $$| $$__  $$  | $$  
+ /$$  \ $$| $$      | $$      | $$       /$$  \ $$| $$  | $$  | $$  
+|  $$$$$$/| $$$$$$$$| $$$$$$$$| $$$$$$$$|  $$$$$$/| $$  | $$ /$$$$$$
+ \______/ |________/|________/|________/ \______/ |__/  |__/|______/
+                                                                    
+                                                                    
+                                                                    
+`
+	
+	first = true
+	testData(&countDaftarK, &daftarK)
+	
+	for !exit {
+		showMenu(&first, s)
 		fmt.Scan(&n)
 		
-		switch n {
-		case 1:
-			beliAset(countDaftarK, &countDaftarP, &countRiwayat, &s, daftarK, &daftarP, &riwayat)
-		case 2:
-			jualAset(&countDaftarP, &countRiwayat, &daftarP, &s, &riwayat)
-		case 3:
-			tampilRiwayat(riwayat, countRiwayat)
-		case 4:
-			pilihSorting(&daftarK, countDaftarK)
-		case 5:
-			tampilAsetPengguna(countDaftarP, daftarP)
-		case 6:
-			listKoin(daftarK, countDaftarK, true)
-		case 7:
-			fmt.Println("\n\t\t 	[PROGRAM SELESAI]")
-		default:
-			fmt.Println("\n\t\t     [INVALID]")
+		if n == 9 {
+			fmt.Print(asciiDone)
+			exit = true
+		} else {
+			switch n {
+				case 1:
+					beliAset(countDaftarK, &countDaftarP, &countRiwayat, daftarK, &daftarP, &riwayat, &s)
+				case 2:
+					jualAset(&countDaftarP, &countRiwayat, &daftarP, &riwayat, &s)
+				case 3:
+					tampilRiwayat(countRiwayat, riwayat)
+				case 4:
+					pilihSorting(countDaftarK, &daftarK)
+				case 5:
+					tampilAsetPengguna(countDaftarP, daftarP)
+				case 6:
+					tabelKoinK(countDaftarK, daftarK)
+				case 7:
+					admin(&countDaftarK, &countDaftarP, &daftarK, &daftarP, KEY)
+				case 8:
+					cariAset(countDaftarK, daftarK)
+				default:
+					fmt.Println("\n[INVALID]")
+			}
 		}
 	}
 }
 
-func showMenu(s float64) {
-	fmt.Println("\n\t\t      ░▒▓██████▓▒░░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░▒▓████████▓▒░▒▓██████▓▒░  ")
-	fmt.Println("\t\t     ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ")
-	fmt.Println("\t\t     ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ")
-	fmt.Println("\t\t     ░▒▓█▓▒░      ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓███████▓▒░  ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ")
-	fmt.Println("\t\t     ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░   ░▒▓█▓▒░        ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ")
-	fmt.Println("\t\t     ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░   ░▒▓█▓▒░        ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ")
-	fmt.Println("\t\t      ░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░   ░▒▓█▓▒░        ░▒▓█▓▒░   ░▒▓██████▓▒░  ")
-	fmt.Printf("\n\t\t     SALDO SAAT INI: $%.2f\n", s)
-	fmt.Println("\t\t     1. BELI ASET")
-	fmt.Println("\t\t     2. JUAL ASET")
-	fmt.Println("\t\t     3. RIWAYAT TRANSAKSI")
-	fmt.Println("\t\t     4. SORTING")
-	fmt.Println("\t\t     5. ASET PENGGUNA")
-	fmt.Println("\t\t     6. LIST KOIN")
-	fmt.Println("\t\t     7. EXIT\n")
-	fmt.Print("\t\t     PILIH OPSI DARI MENU: ")
+func showMenu(first *bool, s float64) {
+	var asciiMenu string
+	
+	asciiMenu = `
+  /$$$$$$  /$$$$$$ /$$      /$$ /$$   /$$ /$$        /$$$$$$   /$$$$$$  /$$$$$$       /$$   /$$ /$$$$$$$  /$$$$$$ /$$$$$$$  /$$$$$$$$ /$$$$$$ 
+ /$$__  $$|_  $$_/| $$$    /$$$| $$  | $$| $$       /$$__  $$ /$$__  $$|_  $$_/      | $$  /$$/| $$__  $$|_  $$_/| $$__  $$|__  $$__//$$__  $$
+| $$  \__/  | $$  | $$$$  /$$$$| $$  | $$| $$      | $$  \ $$| $$  \__/  | $$        | $$ /$$/ | $$  \ $$  | $$  | $$  \ $$   | $$  | $$  \ $$
+|  $$$$$$   | $$  | $$ $$/$$ $$| $$  | $$| $$      | $$$$$$$$|  $$$$$$   | $$        | $$$$$/  | $$$$$$$/  | $$  | $$$$$$$/   | $$  | $$  | $$
+ \____  $$  | $$  | $$  $$$| $$| $$  | $$| $$      | $$__  $$ \____  $$  | $$        | $$  $$  | $$__  $$  | $$  | $$____/    | $$  | $$  | $$
+ /$$  \ $$  | $$  | $$\  $ | $$| $$  | $$| $$      | $$  | $$ /$$  \ $$  | $$        | $$\  $$ | $$  \ $$  | $$  | $$         | $$  | $$  | $$
+|  $$$$$$/ /$$$$$$| $$ \/  | $$|  $$$$$$/| $$$$$$$$| $$  | $$|  $$$$$$/ /$$$$$$      | $$ \  $$| $$  | $$ /$$$$$$| $$         | $$  |  $$$$$$/
+ \______/ |______/|__/     |__/ \______/ |________/|__/  |__/ \______/ |______/      |__/  \__/|__/  |__/|______/|__/         |__/   \______/ 
+                                                                                                                                              
+                                                                                                                                              
+                                                                                                                                              
+`
+	
+	if *first {
+		fmt.Print("\n\n\n", asciiMenu)
+		*first = false
+	}
+	
+	fmt.Printf("\nSALDO SAAT INI: $%.2f\n\n", s)
+	fmt.Println("1. BELI ASET")
+	fmt.Println("2. JUAL ASET")
+	fmt.Println("3. RIWAYAT TRANSAKSI")
+	fmt.Println("4. SORTING")
+	fmt.Println("5. ASET PENGGUNA")
+	fmt.Println("6. LIST KOIN")
+	fmt.Println("7. ADMIN")
+	fmt.Println("8. CARI ASET")
+	fmt.Println("9. EXIT\n")
+	fmt.Print("PILIH OPSI DARI MENU: ")
 }
 
-func beliAset(cDK int, cDP, cR *int, s *float64, dK arrAsetK, dP *arrAsetP, r *arrTransaksi) {
+func tambahAset(cDK *int, dK *arrAsetK) {
+	var idxNew int
+
+	idxNew = -1
+	fmt.Println("\n[TAMBAH ASET]")
+	fmt.Print("INPUT NAMA ASET: ")
+	fmt.Scan(&dK[*cDK].nama)
+	idxNew = cariIndexK(*cDK, *dK, dK[*cDK].nama)
+	
+	if idxNew != -1 {
+		fmt.Println("[INVALID] [ASET SUDAH ADA]")
+	} else {
+		fmt.Print("INPUT HARGA ASET: ")
+		fmt.Scan(&dK[*cDK].harga)
+		fmt.Print("INPUT KAPITALISASI ASET: ")
+		fmt.Scan(&dK[*cDK].kapitalisasi)
+		fmt.Println("[TAMBAH ASET BERHASIL]")
+		*cDK++
+	}
+}
+
+func hapusAset(cDK, cDP *int, dK *arrAsetK, dP *arrAsetP) {
+	var i, idxHapusK, idxHapusP int
+	var hapus string
+	
+	fmt.Println("\n[HAPUS ASET]")
+	fmt.Print("INPUT NAMA ASET YANG INGIN DIHAPUS: ")
+	fmt.Scan(&hapus)
+	idxHapusK = cariIndexK(*cDK, *dK, hapus)
+	
+	if idxHapusK == -1 {
+		fmt.Println("[INVALID] [ASET TIDAK DITEMUKAN]")
+	} else {
+		for i = idxHapusK; i < *cDK-1; i++ {
+			dK[i].nama = dK[i+1].nama
+			dK[i].harga = dK[i+1].harga
+			dK[i].kapitalisasi = dK[i+1].kapitalisasi
+		}
+		
+		idxHapusP = cariIndexP(*cDP, *dP, hapus)
+		*cDK--
+		
+		if idxHapusP != -1 {
+			for i = idxHapusP; i < *cDP-1; i++ {
+				dP[i].nama = dP[i+1].nama
+				dP[i].harga = dP[i+1].harga
+				dP[i].jumlah = dP[i+1].jumlah
+			}
+			
+			*cDP--
+		}
+		
+		fmt.Println("[HAPUS ASET BERHASIL]")
+	}
+}
+
+func ubahAset(cDK, cDP int, dK *arrAsetK, dP *arrAsetP) {
+	var idxUbahK, idxUbahP int
+	var ubah string
+
+	fmt.Println("\n[UBAH ASET]")
+	fmt.Print("INPUT NAMA ASET YANG INGIN DIUBAH: ")
+	fmt.Scan(&ubah)
+	idxUbahK = cariIndexK(cDK, *dK, ubah)
+	idxUbahP = cariIndexP(cDP, *dP, ubah)
+	
+	if idxUbahK == -1 {
+		fmt.Println("[INVALID] [ASET TIDAK DITEMUKAN]")
+	} else {
+		fmt.Print("UBAH NAMA ASET: ")
+		fmt.Scan(&dK[idxUbahK].nama)
+		fmt.Print("UBAH HARGA ASET: ")
+		fmt.Scan(&dK[idxUbahK].harga)
+		fmt.Print("UBAH KAPITALISASI ASET: ")
+		fmt.Scan(&dK[idxUbahK].kapitalisasi)
+		fmt.Println("[UBAH ASET BERHASIL]")
+	}
+	
+	if idxUbahP != -1 {
+		dP[idxUbahP].nama = dK[idxUbahK].nama
+		dP[idxUbahP].harga = dK[idxUbahK].harga
+	}
+}
+
+func beliAset(cDK int, cDP, cR *int, dK arrAsetK, dP *arrAsetP, r *arrTransaksi, s *float64) {
 	var idxBeliK, idxBeliP int
 	var pembelian string
 	var jumlahPembelian float64
-
+	
 	idxBeliK = -1
 	idxBeliP = -1
-	fmt.Printf("\n\t\t     [BELI ASET] [SALDO: %f]\n", *s)
+	fmt.Printf("\n[BELI ASET] [SALDO: %.2f]\n", *s)
 	
 	if cDK == 0 {
-		fmt.Println("\t\t     [INVALID] [BELUM TERSEDIA ASET UNTUK DIBELI]")
+		fmt.Println("[INVALID] [BELUM TERSEDIA ASET UNTUK DIBELI]")
 	} else {
-		fmt.Printf("\t\t     PILIH ASET YANG INGIN DIBELI: ")
+		fmt.Printf("PILIH ASET YANG INGIN DIBELI: ")
 		fmt.Scan(&pembelian)
-		idxBeliK = cariIndexK(pembelian, dK, cDK)
-		idxBeliP = cariIndexP(pembelian, *dP, *cDP)
+		idxBeliK = cariIndexK(cDK, dK, pembelian)
+		idxBeliP = cariIndexP(*cDP, *dP, pembelian)
 		
 		if idxBeliK == -1 {
-			fmt.Println("\t\t     [INVALID] [ASET TIDAK DITEMUKAN]")
+			fmt.Println("[INVALID] [ASET TIDAK DITEMUKAN]")
 		} else {
-			fmt.Printf("\t\t     INPUT JUMLAH %s YANG INGIN DIBELI: ", pembelian)
+			fmt.Printf("INPUT JUMLAH %s YANG INGIN DIBELI: ", pembelian)
 			fmt.Scan(&jumlahPembelian)
 			
 			if *s < (jumlahPembelian * dK[idxBeliK].harga) {
-				fmt.Println("\t\t     [INVALID] [SALDO TIDAK CUKUP]")
+				fmt.Println("[INVALID] [SALDO TIDAK CUKUP]")
 			} else {
 				*s -= jumlahPembelian * dK[idxBeliK].harga
 				
@@ -115,43 +240,43 @@ func beliAset(cDK int, cDP, cR *int, s *float64, dK arrAsetK, dP *arrAsetP, r *a
 					dP[idxBeliP].jumlah += jumlahPembelian
 				}
 				
-				tambahRiwayatBeli(r, cR, pembelian, jumlahPembelian)
-				fmt.Printf("\t\t     [BELI ASET BERHASIL] [SALDO: %f]\n", *s)
+				tambahRiwayatBeli(cR, jumlahPembelian, pembelian, r)
+				fmt.Printf("[BELI ASET BERHASIL] [SALDO: %.2f]\n", *s)
 			}
 		}
 	}
 }
 
-func jualAset(cDP *int, cR *int, dP *arrAsetP, s *float64, r *arrTransaksi) {
+func jualAset(cDP *int, cR *int, dP *arrAsetP, r *arrTransaksi, s *float64) {
 	var i, idxJual, idxHapusP int
 	var penjualan string
 	var jumlahPenjualan float64
 	var isEmpty bool
-
+	
 	idxJual = -1
-	fmt.Printf("\n\t\t     [JUAL ASET] [SALDO: %f]", *s)
+	fmt.Printf("\n[JUAL ASET] [SALDO: %.2f]", *s)
 	
 	if *cDP == 0 {
-		fmt.Println("\n\t\t     [INVALID] [BELUM TERSEDIA ASET UNTUK DIJUAL]")
+		fmt.Println("\n[INVALID] [BELUM TERSEDIA ASET UNTUK DIJUAL]")
 		isEmpty = true
 	}
 	
 	if !isEmpty {
-		fmt.Print("\n\t\t     PILIH ASET UNTUK DIJUAL: ")
+		fmt.Print("\nPILIH ASET UNTUK DIJUAL: ")
 		fmt.Scan(&penjualan)
-		idxJual = cariIndexP(penjualan, *dP, *cDP)
+		idxJual = cariIndexP(*cDP, *dP, penjualan)
 		
 		if idxJual == -1 {
-			fmt.Println("\t\t     [INVALID] [ASET TIDAK DITEMUKAN]")
+			fmt.Println("[INVALID] [ASET TIDAK DITEMUKAN]")
 		} else {
-			fmt.Printf("\t\t     INPUT JUMLAH %s YANG INGIN DIJUAL: ", penjualan)
+			fmt.Printf("INPUT JUMLAH %s YANG INGIN DIJUAL: ", penjualan)
 			fmt.Scan(&jumlahPenjualan)
 			
 			if jumlahPenjualan > dP[idxJual].jumlah {
-				fmt.Println("\t\t     [INVALID] [JUMLAH TIDAK DIMILIKI]")
+				fmt.Println("[INVALID] [JUMLAH TIDAK DIMILIKI]")
 			} else if jumlahPenjualan == dP[idxJual].jumlah {
 				*s += dP[idxJual].harga * jumlahPenjualan
-				idxHapusP = cariIndexP(penjualan, *dP, *cDP)
+				idxHapusP = cariIndexP(*cDP, *dP, penjualan)
 				
 				for i = idxHapusP; i < *cDP-1; i++ {
 					dP[i].nama = dP[i+1].nama
@@ -160,71 +285,49 @@ func jualAset(cDP *int, cR *int, dP *arrAsetP, s *float64, r *arrTransaksi) {
 				}
 				
 				*cDP--
-				tambahRiwayatJual(r, cR, penjualan, jumlahPenjualan)
-				fmt.Printf("\t\t     [JUAL ASET BERHASIL] [SALDO: %f]\n", *s)
+				tambahRiwayatJual(cR, jumlahPenjualan, penjualan, r)
+				fmt.Printf("[JUAL ASET BERHASIL] [SALDO: %.2f]\n", *s)
 			} else {
 				*s += dP[idxJual].harga * jumlahPenjualan
 				dP[idxJual].jumlah -= jumlahPenjualan
-				tambahRiwayatJual(r, cR, penjualan, jumlahPenjualan)
-				fmt.Printf("\t\t     [JUAL ASET BERHASIL] [SALDO: %f]\n", *s)
+				tambahRiwayatJual(cR, jumlahPenjualan, penjualan, r)
+				fmt.Printf("[JUAL ASET BERHASIL] [SALDO: %.2f]\n", *s)
 			}
 		}
 	}
 }
 
-func tampilRiwayat(r arrTransaksi, cR int) {
-	var i int
-
-	fmt.Println("\n\t\t     [RIWAYAT TRANSAKSI]")
-	
+func tampilRiwayat(cR int, r arrTransaksi) {
 	if cR <= 0 {
-		fmt.Println("\t\t     [INVALID] [TIDAK ADA TRANSAKSI]")
+		fmt.Println("[INVALID] [TIDAK ADA TRANSAKSI]")
 	} else {
-		fmt.Println("\t\t     TRANSAKSI\t\tJUMLAH")
-		
-		for i = 0; i < cR; i++ {
-			fmt.Printf("\t\t     %s", r[i].nama)
-			fmt.Printf("\t\t%f\n", r[i].jumlah)
-		}
-		
-		fmt.Println("\t\t     [RIWAYAT TRANSAKSI]")
+		tabelRiwayat(cR, r)
 	}
 }
 
 func tampilAsetPengguna(cDP int, dP arrAsetP) {
-	var i int
-
-	fmt.Println("\n\t\t     [ASET PENGGUNA]")
-	
 	if cDP <= 0 {
-		fmt.Println("\t\t     [INVALID] [TIDAK ADA ASET]")
+		fmt.Println("\n[INVALID] [TIDAK ADA ASET]")
 	} else {
-		fmt.Println("\t\t     NAMA ASET\t\tJUMLAH")
-		
-		for i = 0; i < cDP; i++ {
-			fmt.Printf("\t\t     %s", dP[i].nama)
-			fmt.Printf("\t\t%f\n", dP[i].jumlah)
-		}
-		
-		fmt.Println("\t\t     [ASET PENGGUNA]")
+		tabelKoinP(cDP, dP)
 	}
 }
 
-func tambahRiwayatBeli(r *arrTransaksi, cR *int, nA string, jA float64) {
+func tambahRiwayatBeli(cR *int, jA float64, nA string, r *arrTransaksi) {
 	r[*cR].nama = "BELI " + nA
 	r[*cR].jumlah = jA
 	*cR++
 }
 
-func tambahRiwayatJual(r *arrTransaksi, cR *int, nA string, jA float64) {
+func tambahRiwayatJual(cR *int, jA float64, nA string, r *arrTransaksi) {
 	r[*cR].nama = "JUAL " + nA
 	r[*cR].jumlah = jA
 	*cR++
 }
 
-func cariIndexP(txt string, dP arrAsetP, cDP int) int {
+func cariIndexP(cDP int, dP arrAsetP, txt string) int {
 	var i, idx int
-
+	
 	idx = -1
 	
 	for i = 0; i < cDP; i++ {
@@ -236,9 +339,9 @@ func cariIndexP(txt string, dP arrAsetP, cDP int) int {
 	return idx
 }
 
-func cariIndexK(txt string, dK arrAsetK, cDK int) int {
+func cariIndexK(cDK int, dK arrAsetK, txt string) int {
 	var i, idx int
-
+	
 	idx = -1
 	
 	for i = 0; i < cDK; i++ {
@@ -250,7 +353,7 @@ func cariIndexK(txt string, dK arrAsetK, cDK int) int {
 	return idx
 }
 
-func testData(dK *arrAsetK, cDK *int) {
+func testData(cDK *int, dK *arrAsetK) {
 	dK[0].nama = "BTC"
 	dK[0].harga = 101430.75
 	dK[0].kapitalisasi = 213031267532645
@@ -293,7 +396,7 @@ func testData(dK *arrAsetK, cDK *int) {
 	*cDK = 13
 }
 
-func selectionSort(dK *arrAsetK, cDK int, berdasarkan string, ascending bool) {
+func selectionSort(ascending bool, berdasarkan string, cDK int, dK *arrAsetK) {
 	var i, j int
 	var minIdx int
 	
@@ -315,7 +418,7 @@ func selectionSort(dK *arrAsetK, cDK int, berdasarkan string, ascending bool) {
 		dK[i], dK[minIdx] = dK[minIdx], dK[i]
 	}
 	
-	fmt.Print("\n\t\t     [SELESAI: DATA DIURUTKAN BERDASARKAN ")
+	fmt.Print("\n[SELESAI: DATA DIURUTKAN BERDASARKAN ")
 	
 	if berdasarkan == "harga" {
 		fmt.Print("HARGA ")
@@ -324,68 +427,130 @@ func selectionSort(dK *arrAsetK, cDK int, berdasarkan string, ascending bool) {
 	}
 	
 	if ascending {
-		fmt.Println("TERKECIL -> TERBESAR]")
+		fmt.Println("ASCENDING]")
 	} else {
-		fmt.Println("TERBESAR -> TERKECIL]")
+		fmt.Println("DESCENDING]")
 	}
 }
 
-func listKoin(dK arrAsetK, cDK int, ascending bool) {
-	var i, j int
-	var temp daftarAsetKripto
+func pilihSorting(cDK int, dK *arrAsetK) {
+	var opsi int
+	
+	fmt.Println("\n[PILIH JENIS SORTING]")
+	fmt.Println("1. HARGA (ASCENDING)")
+	fmt.Println("2. HARGA (DESCENDING)")
+	fmt.Println("3. KAPITALISASI (ASCENDING)")
+	fmt.Println("4. KAPITALISASI (DESCENDING)\n")
+	fmt.Print("PILIH OPSI: ")
+	fmt.Scan(&opsi)
+	
+	switch opsi {
+		case 1:
+			selectionSort(true, "harga", cDK, dK)
+		case 2:
+			selectionSort(false, "harga", cDK, dK)
+		case 3:
+			selectionSort(true, "kapitalisasi", cDK, dK)
+		case 4:
+			selectionSort(false, "kapitalisasi", cDK, dK)
+		default:
+			fmt.Println("\n[INVALID OPTION]")
+	}
+}
 
-	for i = 1; i < cDK; i++ {
-		temp = dK[i]
-		j = i - 1
+func admin(cDK, cDP *int, dK *arrAsetK, dP *arrAsetP, key string) {
+	var inputKey string
+	var nAdmin int
+	
+	fmt.Print("\nINPUT ADMIN KEY: ")
+	fmt.Scan(&inputKey)
+	
+	if inputKey != key {
+		fmt.Println("[INVALID] [SALAH KEY]")
+	} else {
+		fmt.Println("\n1. TAMBAH ASET")
+		fmt.Println("2. HAPUS ASET")
+		fmt.Println("3. UBAH ASET")
+		fmt.Print("\nPILIH OPSI DARI MENU ADMIN: ")
+		fmt.Scan(&nAdmin)
 		
-		if ascending {
-			for j >= 0 && dK[j].kapitalisasi > temp.kapitalisasi {
-				dK[j+1] = dK[j]
-				j--
-			}
-		} else {
-			for j >= 0 && dK[j].kapitalisasi < temp.kapitalisasi {
-				dK[j+1] = dK[j]
-				j--
+		switch nAdmin {
+			case 1:
+				tambahAset(cDK, dK)
+			case 2:
+				hapusAset(cDK, cDP, dK, dP)
+			case 3:
+				ubahAset(*cDK, *cDP, dK, dP)
+			default:
+				fmt.Println("\n[INVALID]")
+		}
+	}
+}
+
+func tabelKoinK(cDK int, dK arrAsetK) {
+	fmt.Println("\n[DAFTAR KOIN TERSEDIA]")
+	fmt.Println("====================================================")
+	fmt.Printf("%-12s | %-15s | %-20s\n", "NAMA", "HARGA", "KAPITALISASI")
+	fmt.Println("-------------+-----------------+--------------------")
+	
+	for i := 0; i < cDK; i++ {
+		fmt.Printf("%-12s | $%-14.2f | $%-19.2f\n", dK[i].nama, dK[i].harga, dK[i].kapitalisasi)
+	}
+	
+	fmt.Println("====================================================")
+}
+
+func tabelKoinP(cDP int, dP arrAsetP) {
+	fmt.Println("\n[DAFTAR KOIN PENGGUNA]")
+	fmt.Println("===========================================")
+	fmt.Printf("%-12s | %-15s | %-15s\n", "NAMA", "HARGA", "JUMLAH")
+	fmt.Println("-------------+-----------------+-----------")
+	
+	for i := 0; i < cDP; i++ {
+		fmt.Printf("%-12s | $%-14.2f | %-14.8f\n", dP[i].nama, dP[i].harga, dP[i].jumlah)
+	}
+	
+	fmt.Println("===========================================")
+}
+
+func tabelRiwayat(cR int, r arrTransaksi) {
+	fmt.Println("\n[DAFTAR TRANSAKSI]")
+	fmt.Println("=========================")
+	fmt.Printf("%-12s | %-15s\n", "NAMA", "JUMLAH")
+	fmt.Println("-------------+-----------")
+	
+	for i := 0; i < cR; i++ {
+		fmt.Printf("%-12s | %-14.8f\n", r[i].nama, r[i].jumlah)
+	}
+	
+	fmt.Println("=========================")
+}
+
+func cariAset(cDK int, dK arrAsetK) {
+	var i, j int
+	var txt string
+	var sama bool
+	
+	fmt.Print("\nINPUT PENCARIAN: ")
+	fmt.Scan(&txt)
+	fmt.Println("\n[HASIL PENCARIAN]")
+	fmt.Println("====================================================")
+	fmt.Printf("%-12s | %-15s | %-20s\n", "NAMA", "HARGA", "KAPITALISASI")
+	fmt.Println("-------------+-----------------+--------------------")
+	
+	for i = 0; i < cDK; i++ {
+		sama = true
+		
+		for j = 0; j < len(txt); j++ {
+			if txt[j] != dK[i].nama[j] {
+				sama = false
 			}
 		}
 		
-		dK[j+1] = temp
+		if sama {
+			fmt.Printf("%-12s | $%-14.2f | $%-19.2f\n", dK[i].nama, dK[i].harga, dK[i].kapitalisasi)
+		}
 	}
 	
-	fmt.Println("\n\t\t     [DAFTAR KOIN TERSEDIA]")
-	fmt.Println("\t\t     ================================================")
-	fmt.Printf("\t\t     %-12s | %-15s | %-20s\n", "Nama", "Harga", "Kapitalisasi")
-	fmt.Println("\t\t     -----------------------------------------------")
-	
-	for i := 0; i < cDK; i++ {
-		fmt.Printf("\t\t     %-12s | $%-14.2f | $%-19.2f\n", dK[i].nama, dK[i].harga, dK[i].kapitalisasi)
-	}
-	
-	fmt.Println("\t\t     ================================================")
-}
-
-func pilihSorting(dK *arrAsetK, cDK int) {
-	var opsi int
-	
-	fmt.Println("\n\t\t     [PILIH JENIS SORTING]")
-	fmt.Println("\t\t     1. Harga (Terkecil -> Terbesar)")
-	fmt.Println("\t\t     2. Harga (Terbesar -> Terkecil)")
-	fmt.Println("\t\t     3. Kapitalisasi (Terkecil -> Terbesar)")
-	fmt.Println("\t\t     4. Kapitalisasi (Terbesar -> Terkecil)")
-	fmt.Print("\t\t     Pilih opsi: ")
-	fmt.Scan(&opsi)
-
-	switch opsi {
-	case 1:
-		selectionSort(dK, cDK, "harga", true)
-	case 2:
-		selectionSort(dK, cDK, "harga", false)
-	case 3:
-		selectionSort(dK, cDK, "kapitalisasi", true)
-	case 4:
-		selectionSort(dK, cDK, "kapitalisasi", false)
-	default:
-		fmt.Println("\t\t     [INVALID OPTION]")
-	}
+	fmt.Println("====================================================")
 }
