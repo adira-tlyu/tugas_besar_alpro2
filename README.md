@@ -1,5 +1,7 @@
 Aplikasi Simulasi Kripto Sederhana
+
 Akbar Fawwaz / 103012400032
+
 Muhammad Adirajasa Gumilar / 103012400224
 
 (Adira):
