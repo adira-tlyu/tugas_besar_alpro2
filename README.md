@@ -1,8 +1,8 @@
-Adira:
+(Adira):
 beliAset, jualAset, cariIndexP, cariIndexK, admin, cariAset
 
-Akbar:
+(Akbar):
 tampilRiwayat, tambahRiwayatBeli, tambahRiwayatJual, tampilAsetPengguna, testData, selectionSort, pilihSorting, tabelKoinK, tabelKoinP, tabelRiwayat
 
-Adira, Akbar:
+(Adira & Akbar):
 main, showMenu, tambahAset, hapusAset, ubahAset
