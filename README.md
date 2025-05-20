@@ -4,8 +4,7 @@ adira {
     cariIndexP
     cariIndexK
     admin
-    cariAset
-}
+    cariAset }
 
 akbar {
     tampilRiwayat
@@ -17,14 +16,11 @@ akbar {
     pilihSorting
     tabelKoinK
     tabelKoinP
-    tabelRiwayat
-}
+    tabelRiwayat }
 
 adira, akbar {
     main
     showMenu
     tambahAset 
     hapusAset
-    ubahAset
-
-}
+    ubahAset }
