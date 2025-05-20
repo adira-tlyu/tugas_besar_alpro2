@@ -1,30 +1,30 @@
 adira {
-    beliAset - adira
-    jualAset - adira
-    cariIndexP - adira
-    cariIndexK - adira
-    admin - adira
-    cariAset - adira
+    beliAset
+    jualAset
+    cariIndexP
+    cariIndexK
+    admin
+    cariAset
 }
 
 akbar {
-    tampilRiwayat - akbar
-    tambahRiwayatBeli - akbar
-    tambahRiwayatJual - akbar
-    tampilAsetPengguna - akbar
-    testData - akbar
-    selectionSort - akbar
-    pilihSorting - akbar
-    tabelKoinK - akbar
-    tabelKoinP - akbar
-    tabelRiwayat - akbar
+    tampilRiwayat
+    tambahRiwayatBeli
+    tambahRiwayatJual
+    tampilAsetPengguna
+    testData
+    selectionSort
+    pilihSorting
+    tabelKoinK
+    tabelKoinP
+    tabelRiwayat
 }
 
 adira, akbar {
-    main - adira, akbar
-    showMenu - adira, akbar
-    tambahAset - adira, akbar
-    hapusAset - adira, akbar
-    ubahAset - adira, akbar
+    main
+    showMenu
+    tambahAset 
+    hapusAset
+    ubahAset
 
 }
