@@ -1,4 +1,3 @@
-Pembagian tugas
 adira {
     beliAset - adira
     jualAset - adira
@@ -7,6 +6,7 @@ adira {
     admin - adira
     cariAset - adira
 }
+
 akbar {
     tampilRiwayat - akbar
     tambahRiwayatBeli - akbar
@@ -19,6 +19,7 @@ akbar {
     tabelKoinP - akbar
     tabelRiwayat - akbar
 }
+
 adira, akbar {
     main - adira, akbar
     showMenu - adira, akbar
